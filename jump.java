@@ -11,11 +11,13 @@ public class jump extends JPanel implements Runnable, ActionListener, KeyListene
 	private static final long serialVersionUID = 2447649188635840058L;
 		Timer t = new Timer(5, this);
 		background b = new background();
+		JLabel label = new JLabel("Test");
 		int sizeofrect1 = 30;
 		int numofshad = 5;
 		int numofmenu = 10;
 		int menustart1 = 20;
 		int iop = 5;
+		int point = 0;
 		double menuwidth = 100;
 		double menuheight = 30;
 		double movement = 0.1;
@@ -26,7 +28,7 @@ public class jump extends JPanel implements Runnable, ActionListener, KeyListene
 		double g = 9.81;
 		double dt = 0.01;
 		double spacing = 2.5;
-		double ground = 500/4*3;
+		double ground = 0;
 		double speed = 2;
 		double ux[] = new double[numofshad];
 		double uy[] = new double[numofshad];
@@ -45,6 +47,7 @@ public class jump extends JPanel implements Runnable, ActionListener, KeyListene
 		boolean left = false;
 		boolean right = false;
 		boolean oops = true;
+		boolean pointbool = false;
 		
 		
 		//private List<Bullets> firedBullets = new ArrayList<Bullets>();
@@ -67,6 +70,7 @@ public jump() {
     bullets.launch(direction);
 }*/
 public void paintComponent(Graphics g) {
+	ground = getHeight()*5/6;
 	for(int l = 1; l < numofmenu - 3; l++) {
 		x1[l] = (getWidth()/2) - (menuwidth/2);
 		y1[l] = (getHeight()/4) - (menuheight/2) + l * 2 * menuheight;
@@ -86,6 +90,7 @@ public void paintComponent(Graphics g) {
 	g2.fill(new Rectangle2D.Double(x2[2], y2[2], s[2], s[2]));
 	g2.fill(new Rectangle2D.Double(x2[3], y2[3], s[3], s[3]));
 	g2.fill(new Rectangle2D.Double(x2[4], y2[4], s[4], s[4]));
+	g2.fill(new Rectangle2D.Double(10+point, 10+point, point, point));
 	/*g2.fill(new Rectangle2D.Double(x1[1] ,y1[1] , menuwidth, menuheight));
 	g2.fill(new Rectangle2D.Double(x1[2] ,y1[2] , menuwidth, menuheight));
 g2.setColor(Color.YELLOW);
@@ -130,9 +135,13 @@ public void keyPressed(KeyEvent e) {
 		pause = false;
 		menu = false;
 	}if((KeyEvent.VK_1 == key) && (!pause)) {
-		
+		pause = true;
+		menu = true;
+	}if((KeyEvent.VK_9 == key) && (!pause)) {
+		x[0] = getWidth()/2;
+		y[0] = getHeight()/10;
 	}
-}
+	}
 }
 public void right() {
 	ux[0] = 1;
@@ -142,7 +151,7 @@ public void left() {
 	x[0] = x[0] - movement * dt;
 }
 public void jumping() {
-	if((y[0] <= (ground - sizeofrect1)) && !pause) {
+	if((y[0] <= (ground - sizeofrect1)) && !pause && !collision) {
 		uy[0] = uy[0] + (-g * dt);
 		y[0] = y[0] - (uy[0] * dt);
 		//t1 = t1 + dt;
@@ -171,7 +180,7 @@ public void objforward() {
 		}if((x2[count] < (0 - (s[count]/2)))) {
 			x2[count] = getWidth()- s[count];
 		}if(x2[count] > getWidth() + s[count]) {
-			x2[count] = 0;
+			x2[count] = getWidth() + s[count];
 		}
 	}
 }
@@ -179,9 +188,21 @@ public void bump() {
 	for(int count = 0; count < iop; count++) {
 		if(x[0]+sizeofrect1 > x2[count] && x[0]+sizeofrect1 < x2[count] + s[count] && y[0] > y2[0] && y[0] < y2[4]+s[count]) {
 			right = false;
-		//	x[0] = x[0] - 1;
+		x[0] = x[0] - 1;
 		}
 	}
+}
+public void score(){
+	for(int count = 0; count < iop; count++) {
+		if(y[0] < y2[count] && x[0] > x2[count] && x[0] < x2[count] + s[count]) {
+			pointbool = true;
+		}if(pointbool == true && collision) {
+				point++;
+				pointbool = false;
+				System.out.println(point);
+			}
+		}
+	//System.out.println(pointbool);
 }
 public void delay(int delay){
 	try{
@@ -202,6 +223,7 @@ public void run() {
 	if(!pause) {
 		objforward();
 		bump();
+		score();
 	if(left) {
 		left();
 	}if(right) {
@@ -212,10 +234,13 @@ public void run() {
 		collision = false;
 		jumping();
 	}if(y[0] >= (ground - sizeofrect1)) {
-		movement = 0.0008;
+		movement = 0.005;
 		movement2 = 0.00002;
 		collision = true;
 		uy[0] = 60;
+		if(y[0]+1 > (ground - sizeofrect1)) {
+			y[0] = ground - sizeofrect1;
+		}
 	}}for(int k = 0; k < iop; k++) {
 		y2[k] = 200 + s[k] * k/2;
 		}for(int s2 = 0; s2 < iop; s2++ ) {
