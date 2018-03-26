@@ -70,7 +70,7 @@ public jump() {
     bullets.launch(direction);
 }*/
 public void paintComponent(Graphics g) {
-	ground = getHeight()*5/6;
+	ground = getHeight()*6/7;
 	for(int l = 1; l < numofmenu - 3; l++) {
 		x1[l] = (getWidth()/2) - (menuwidth/2);
 		y1[l] = (getHeight()/4) - (menuheight/2) + l * 2 * menuheight;
@@ -124,9 +124,9 @@ public void keyPressed(KeyEvent e) {
 		//System.out.println(uy[0]);
 		//uy[0] = uy[0] * (9 * -g * dt);
 		y[0] = y[0] - (uy[0] * dt);
-	}else if (key == KeyEvent.VK_A && !pause) {
+	}if (key == KeyEvent.VK_A && !pause) {
     	left = true;
-    }else if (key == KeyEvent.VK_D && !pause) {
+    }if (key == KeyEvent.VK_D && !pause) {
     	right = true;
     }if(KeyEvent.VK_ESCAPE == key && (pause == false)) {
 		pause = true;

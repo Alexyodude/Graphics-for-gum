@@ -1,6 +1,6 @@
 import javax.swing.JFrame;
 
-public class Out{
+public class Out1{
 	public static void main(String[] args) {
 		
 		JFrame f = new JFrame("Out");
